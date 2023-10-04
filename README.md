@@ -1,66 +1,45 @@
-## Foundry
+ERC721 Marketplace template
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+marketlist:
+order creator;
+token address;
+tokenid;
+price;
+signature;
+deadline;
 
-Foundry consists of:
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Conditon check:
+Creator:check owner most be == msg.sender
 
-## Documentation
+token address:check that most have  approved (address(this))to spend token address.
+tokenid :check that the owner is the really owner of the tokenid.
 
-https://book.getfoundry.sh/
+precondition;
+tokenaddress:check that address is not address(0)
+check that the address smartcontract address that contain code.
 
-## Usage
+price: check that price is > 0
 
-### Build
+signature---
 
-```shell
-$ forge build
-```
+deadline : most be > block.stamp with 1hour
 
-### Test
+code logic
+store in a storage(state)
+increment id for listing
+emit event
 
-```shell
-$ forge test
-```
+code execution
+-check that listingId< public counter
+- check that msg.value == listing.price
+- check that block.timestamp <= listing.deadline
+- check that signature is signed by listing.owner
 
-### Format
 
-```shell
-$ forge fmt
-```
+logic
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- retrieve data from storage
+- transfer ether from buyer to seller
+- transfer nft from seller to buyer
+- emit event
