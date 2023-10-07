@@ -69,7 +69,6 @@ contract MarketplaceTest is Helpers {
         switchSigner(Fuser1);
         nft.setApprovalForAll(address(marketplace), true);
         l.lister = Fuser1;
-        l.deadline = uint88(block.timestamp + 59 minutes);
         l.sig = constructSig(
             l.token,
             l.tokenId,
@@ -78,7 +77,7 @@ contract MarketplaceTest is Helpers {
             l.lister,
             privateKey1
         );
-        vm.expectRevert("Deadline must be greater than price");
+        vm.expectRevert("Deadline must be greater than current time");
         marketplace.createListing(l);
     }
     function testvalidsignature() public {
@@ -117,14 +116,28 @@ contract MarketplaceTest is Helpers {
         
         uint256 lId = marketplace.createListing(l);
 
-        switchSigner(Fuser1);
+        switchSigner(Fuser2);
+        vm.expectRevert("You are not the lister of this listing");
         marketplace.editListing(lId, 0, false);
-        vm.expectRevert("Listing is expired");
     }
     function testexecutenonactive() public {
         switchSigner(Fuser1);
-        vm.expectRevert("Not enough value");
-        marketplace.executeListing(1);
+        nft.setApprovalForAll(address(marketplace), true);
+        l.lister = Fuser1;
+        l.deadline = uint88(block.timestamp + 120 minutes);
+        l.sig = constructSig(
+            l.token,
+            l.tokenId,
+            l.price,
+            l.deadline,
+            l.lister,
+            privateKey1
+        );
+        
+        uint256 lId = marketplace.createListing(l);
+        marketplace.editListing(lId, 0.1 ether, false);
+        vm.expectRevert("Listing is not active");
+        marketplace.executeListing{value: 1.1 ether}(lId);
     }
     function testeditlist()public{
         switchSigner(Fuser1);

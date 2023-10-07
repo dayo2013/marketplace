@@ -45,5 +45,6 @@ abstract contract Helpers is Test {
 
     function switchSigner(address _newSigner) public {
         vm.startPrank(_newSigner);
+        vm.deal(_newSigner, 3 ether);
     }
 }

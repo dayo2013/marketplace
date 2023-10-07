@@ -59,7 +59,7 @@ contract Marketplace{
         
     
     function executeListing(uint256 _listingId) public payable {
-        require(listings[_listingId].active,"Listing is not active");
+        require(listings[_listingId].active,"git");
         Addlisting storage l = listings[_listingId];
         require(l.deadline > block.timestamp,"Listing is expired");
         require(l.price <= msg.value,"Not enough value");
